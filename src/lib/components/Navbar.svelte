@@ -3,25 +3,115 @@
 
     import { onMount } from "svelte"
     import { page } from '$app/stores';
-    import { fade , fly, slide } from "svelte/transition"
+    import { slide } from "svelte/transition"
+    import { gsap } from "gsap"
     
     import getScroll    from "$lib/js/getScroll.js"
     import clickOutside from "$lib/js/clickOutside"
 
     import { constNav } from "$lib/const/const.js"
   
-    let burger = false
+    let burger   = false
     let darkmode = true
-    let foo = false
+    let foo      = false
+
+    /**
+	 * @type {Element}
+	 */
+    let previous
+    /**
+	 * @type {Element}
+	 */
+    let indicator
+
+    let tlActive = gsap.timeline()
   
     onMount(
         ()=>{    
+            animateNav()
             foo = getScroll()
             window.onscroll = 
             function()
                 { burger ? foo = true : foo = getScroll() }
         }
     )
+
+    function animateNav(){
+
+        const nav = document.querySelector('#nav');
+        const navItems = document.querySelectorAll('#nav a');
+
+        if(!nav){ return }
+
+        gsap.set(".awa-slide" , { opacity:0 })
+
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                move(item)
+            });
+        });
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                active()
+            })
+        })
+
+        nav.addEventListener('mouseenter', () => {
+            appear()
+        });
+
+        nav.addEventListener('mouseleave', () => {
+            disappear()
+        });
+
+        function appear(){
+            gsap.fromTo(".awa-slide", 
+                { opacity:0 }, 
+                { opacity:1 , duration:.8 })
+        }
+
+        function disappear(){
+            gsap.fromTo(".awa-slide", 
+                { opacity:1 }, 
+                { opacity:0 , duration:.8 })
+        }
+
+        function active(){
+            if(tlActive.isActive())
+                return
+            tlActive.to(".awa-slide", { y:-3 , duration:.5 })
+            tlActive.to(".awa-slide", { y:3 , duration:.5 })
+            tlActive.to(".awa-slide", { y:0 , duration:.5 })
+        }
+
+        /** @param {Element} item */
+        function move(item){
+
+            if(!nav) 
+                return 
+
+            let indicatorMiddle = indicator.getBoundingClientRect()['width']/2
+            let from
+            let to = item.getBoundingClientRect()['x'] + (item.getBoundingClientRect()['width']/2)
+
+            if(previous)
+                { from = indicator.getBoundingClientRect()['x'] + indicatorMiddle }
+            else 
+                { from = to }
+
+            from += -nav.getBoundingClientRect()['x'] -indicatorMiddle
+            to += -nav.getBoundingClientRect()['x'] -indicatorMiddle
+
+            gsap.fromTo(".awa-slide",
+                { x:from },
+                { x:to , duration:.8 })
+
+            previous = item
+        }
+
+
+    }
   
 </script>
   
@@ -62,23 +152,22 @@
             </a>
   
             <!-- menu -->
-            <nav class="text-awa-2 font-normal hidden lg:flex justify-center absolute w-[600px] left-[calc(50%-300px)]">
-                <a 
-                    aria-current={$page.url.pathname === '/' ? 'page' : undefined}
-                    class="link p-2 uppercase duration-300 hover:text-awa-2 mix-blend-difference" 
-                    href="/"
-                > 
-                    ff 
-                </a>
+            <nav 
+                id="nav"
+                class="text-awa-2 font-normal hidden lg:flex justify-between absolute w-[600px] left-[calc(50%-300px)] gap-1"
+            >
+                <div bind:this={indicator} class="awa-slide opacity-0 -top-4 absolute will-change-transform">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 7.41421L6.41421 6L12.0711 11.6569L17.7279 6L19.1421 7.41421L12.0711 14.4853L5 7.41421Z" fill="currentColor" /><path d="M19 16.3432H5V18.3432H19V16.3432Z" fill="currentColor" /></svg>
+                </div>
                 { #each constNav as { url , text } }
                     <a 
                         aria-current={$page.url.pathname === url ? 'page' : undefined}
-                        class="link p-2 uppercase duration-300 hover:text-awa-2 mix-blend-difference" 
+                        class="link p-2 uppercase duration-300 mix-blend-difference" 
                         href="{ url }"
                     > 
                         { text } 
                     </a>
-                {/each }
+                { /each }
             </nav>
   
             <!-- theme button -->
@@ -123,52 +212,117 @@
   
   <!-- --------------------------------------- -->
   
-  <style type="postcss">
+<style type="postcss">
   
-  .awa-scrolled {
-    @apply
-      border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] backdrop-blur-sm;
-  }
+    .awa-scrolled {
+        @apply
+        border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] backdrop-blur-sm;
+    }
   
-  .awa-burger1 {
-    @apply
-      rotate-45 translate-y-1
-  }
+    .awa-burger1 {
+        @apply
+        rotate-45 translate-y-1
+    }
   
-  .awa-burger2 {
-    @apply
-      -rotate-45 -translate-y-1
-  }
+    .awa-burger2 {
+        @apply
+        -rotate-45 -translate-y-1
+    }
   
-  .awa-btn {
-    @apply
-      relative h-9 w-9 rounded-full before:absolute before:inset-0 before:rounded-full 
-      before:border before:bg-gradient-to-b before:transition-transform before:duration-300 
-      hover:before:scale-105 active:duration-75 active:before:scale-95 before:border-gray-700 before:bg-gray-800
-  }
+    .awa-btn {
+        @apply
+        relative h-9 w-9 rounded-full before:absolute before:inset-0 before:rounded-full 
+        before:border before:bg-gradient-to-b before:transition-transform before:duration-300 
+        hover:before:scale-105 active:duration-75 active:before:scale-95 before:border-gray-700 before:bg-gray-800
+    }
   
-  .awa-svg-sun {
-    @apply
-      relative m-auto h-5 w-5 fill-gray-500 duration-300 
-      group-hover:rotate-180 group-hover:fill-yellow-400
-  }
+    .awa-svg-sun {
+        @apply
+        relative m-auto h-5 w-5 fill-gray-500 duration-300 
+        group-hover:rotate-180 group-hover:fill-yellow-400
+    }
   
-  .awa-svg-moon {
-    @apply
-      relative m-auto h-5 w-5 fill-gray-500 duration-300 
-      group-hover:-rotate-90 group-hover:fill-blue-600
-  }
+    .awa-svg-moon {
+        @apply
+        relative m-auto h-5 w-5 fill-gray-500 duration-300 
+        group-hover:-rotate-90 group-hover:fill-blue-600
+    }
 
-  .link {
-    @apply
-      relative
-  }
+    .link {
+        @apply
+        relative
+    }
 
-  .link[aria-current='page']::before {
-    @apply
-      content-[''] w-0 h-0 absolute top-0 left-[calc(50%-6px)] 
-      border-[6px] border-transparent border-t-[6px] border-t-[#ff3e00]
-      transition-transform duration-100
-  }
+    /* 
+    .link[aria-current='page']::before {
+        @apply
+        content-[''] w-0 h-0 absolute top-0 left-[calc(50%-6px)] 
+        border-[6px] border-transparent border-t-[6px] border-t-[#ff3e00]
+        transition-transform duration-100
+    } 
+    */
+
+    /*
+    .awa-custom-btn-1 {
+        all: unset;
+        width: 100px;
+        height: 30px;
+        font-size: 16px;
+        background: transparent;
+        border: none;
+        position: relative;
+        color: #f0f0f0;
+        cursor: pointer;
+        z-index: 1;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    .awa-custom-btn-1::before {
+        transform: translate(0%, 0%);
+        width: 100%;
+        height: 100%;
+        background: #28282d;
+        border-radius: 10px;
+    }
+
+    .awa-custom-btn-1:hover::before {
+        transform: translate(5%, 20%);
+        width: 110%;
+        height: 110%;
+    }
+
+    .awa-custom-btn-1::after {
+        transform: translate(10px, 10px);
+        width: 35px;
+        height: 35px;
+        background: #ffffff15;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 50px;
+    }
+
+    .awa-custom-btn-1:hover::after {
+        border-radius: 10px;
+        transform: translate(0, 0);
+        width: 100%;
+        height: 100%;
+    }
+
+    .awa-custom-btn-1::after, .awa-custom-btn-1::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: -99999;
+        transition: all 0.4s;
+    } 
+    */
   
-  </style>
+</style>

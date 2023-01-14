@@ -9,5 +9,5 @@ export const constNav = [
 ]
 
 export const constSkills = [
-    {},
+    { text : 'Python' , tech : [ 'pandas' , 'numpy' , 'flask' ] },
 ]
