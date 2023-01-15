@@ -3,7 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
-body  { @apply overflow-x-hidden min-h-screen scroll-smooth bg-awa-1 }
-h1    { @apply text-4xl sm:text-6xl md:text-7xl lg:text-8xl }
-p div { @apply sm:text-lg md:text-xl }
+body  { @apply overflow-x-hidden min-h-screen scroll-smooth bg-awa-1 text-awa-2 }
+
+.title { @apply font-bold tracking-tighter }
+.awa-text-gradient { @apply bg-clip-text text-transparent bg-[length:200%] animate-awa-text-gradient }
+.awa-section-sidebar { @apply relative z-30 -ml-6 mr-4 w-12 sm:mr-6 md:mr-16 lg:-ml-12 }
+.awa-section-sidebar:after { @apply content-[""] bg-[linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.15)25%,hsla(0,0%,100%,.15)75%,hsla(0,0%,100%,0))] w-[2px] absolute top-0 bottom-0 left-6 }
+.awa-section-sidebar.awa-exposed-line:after { @apply -top-64 }
+.awa-step-circle { @apply flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-bold text-[#050505] }
+.awa-card-transparent-blur { @apply rounded-md border border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] p-8 backdrop-blur transition-all duration-300 }
+.awa-card-transparent-blur:hover { @apply border-white ease-in }
+
 

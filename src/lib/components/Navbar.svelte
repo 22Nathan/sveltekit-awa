@@ -6,29 +6,30 @@
     import { slide } from "svelte/transition"
     import { gsap } from "gsap"
     
-    import getScroll    from "$lib/js/getScroll.js"
+    import getScroll    from "$lib/js/getScroll"
     import clickOutside from "$lib/js/clickOutside"
 
-    import { constNav } from "$lib/const/const.js"
+    import { constNav } from "$lib/const/const"
   
     let burger   = false
     let darkmode = true
     let foo      = false
 
-    /**
-	 * @type {Element}
-	 */
+    /** @type {Element} */
     let previous
-    /**
-	 * @type {Element}
-	 */
+    /** @type {Element} */
     let indicator
+    /** @type {Element} */
+    let indicatorMobile
 
     let tlActive = gsap.timeline()
+
+    $: run = runAnimateNavMobile(burger)
   
     onMount(
         ()=>{    
             animateNav()
+
             foo = getScroll()
             window.onscroll = 
             function()
@@ -36,22 +37,26 @@
         }
     )
 
+
+    /** @param {boolean} x */
+    function runAnimateNavMobile(x){
+        if(!x) return
+        setTimeout( () => animateNavMobile() , 100 )
+    }
+
     function animateNav(){
 
-        const nav = document.querySelector('#nav');
-        const navItems = document.querySelectorAll('#nav a');
+        const nav = document.querySelector('#nav')
+        const navItems = document.querySelectorAll('#nav a')
 
-        if(!nav){ return }
+        if(!nav) return 
 
         gsap.set(".awa-slide" , { opacity:0 })
 
         navItems.forEach(item => {
             item.addEventListener('mouseenter', () => {
                 move(item)
-            });
-        });
-
-        navItems.forEach(item => {
+            })
             item.addEventListener('click', () => {
                 active()
             })
@@ -59,11 +64,11 @@
 
         nav.addEventListener('mouseenter', () => {
             appear()
-        });
+        })
 
         nav.addEventListener('mouseleave', () => {
             disappear()
-        });
+        })
 
         function appear(){
             gsap.fromTo(".awa-slide", 
@@ -88,8 +93,7 @@
         /** @param {Element} item */
         function move(item){
 
-            if(!nav) 
-                return 
+            if(!nav) return 
 
             let indicatorMiddle = indicator.getBoundingClientRect()['width']/2
             let from
@@ -101,7 +105,7 @@
                 { from = to }
 
             from += -nav.getBoundingClientRect()['x'] -indicatorMiddle
-            to += -nav.getBoundingClientRect()['x'] -indicatorMiddle
+            to   += -nav.getBoundingClientRect()['x'] -indicatorMiddle
 
             gsap.fromTo(".awa-slide",
                 { x:from },
@@ -112,11 +116,86 @@
 
 
     }
+
+    function animateNavMobile(){
+
+        if(!burger) return
+
+        const navMobile = document.querySelector('#navMobile')
+        const navItemsMobile = document.querySelectorAll('#navMobile a')
+
+        if(!navMobile) return
+
+        gsap.set(".awa-slide-mobile", { opacity:0 })
+
+        navItemsMobile.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                move(item)
+            })
+            item.addEventListener('click', () => {
+                active()
+            })
+        })
+
+        navMobile.addEventListener('mouseenter', () => {
+            appear()
+        })
+
+        navMobile.addEventListener('mouseleave', () => {
+            disappear()
+        })
+
+        function appear(){
+            gsap.fromTo(".awa-slide-mobile", 
+                { opacity:0 }, 
+                { opacity:1 , duration:.8 })
+        }
+
+        function disappear(){
+            gsap.fromTo(".awa-slide-mobile", 
+                { opacity:1 }, 
+                { opacity:0 , duration:.8 })
+        }
+
+        function active(){
+            if(tlActive.isActive())
+                return
+            tlActive.to(".awa-slide-mobile", { x:-3 , duration:.5 })
+            tlActive.to(".awa-slide-mobile", { x:3 , duration:.5 })
+            tlActive.to(".awa-slide-mobile", { x:0 , duration:.5 })
+        }
+
+        /** @param {Element} item */
+        function move(item){
+
+            if(!navMobile) return
+
+            let indicatorMobileMiddle = indicatorMobile.getBoundingClientRect()['height']/2
+            let from
+            let to = item.getBoundingClientRect()['y'] + (item.getBoundingClientRect()['height']/2)
+
+            if(previous)
+                { from = indicatorMobile.getBoundingClientRect()['y'] + indicatorMobileMiddle }
+            else 
+                { from = to }
+
+            from += -navMobile.getBoundingClientRect()['y'] -indicatorMobileMiddle
+            to   += -navMobile.getBoundingClientRect()['y'] -indicatorMobileMiddle
+
+            gsap.fromTo(".awa-slide-mobile",
+                { y:from },
+                { y:to , duration:.8 })
+
+            previous = item
+
+        }
+
+    }
   
 </script>
   
 <!-- --------------------------------------- -->
-  
+
     <nav class="fixed border-b border-transparent transition-colors duration-300 py-5 top-0 inset-x-0 z-50" 
         class:awa-scrolled="{foo === true}"
         use:clickOutside
@@ -144,7 +223,12 @@
             </button>
   
             <!-- logo -->
-            <a href="/" class="p-2 group">
+            <a 
+                on:click={()=>burger=false}
+                on:click={()=>burger ? foo=true : foo=getScroll()}
+                href="/" 
+                class="p-2 group"
+            >
                 <svg width="78" height="30" viewBox="0 0 78 30" fill="none" xmlns="http://www.w3.org/2000/svg"> 
                     <path d="M18.5147 0C15.4686 0 12.5473 1.21005 10.3934 3.36396L3.36396 10.3934C1.21005 12.5473 0 15.4686 0 18.5147C0 24.8579 5.14214 30 11.4853 30C14.5314 30 17.4527 28.7899 19.6066 26.636L24.4689 21.7737C24.469 21.7738 24.4689 21.7736 24.4689 21.7737L38.636 7.6066C39.6647 6.57791 41.0599 6 42.5147 6C44.9503 6 47.0152 7.58741 47.7311 9.78407L52.2022 5.31296C50.1625 2.11834 46.586 0 42.5147 0C39.4686 0 36.5473 1.21005 34.3934 3.36396L15.364 22.3934C14.3353 23.4221 12.9401 24 11.4853 24C8.45584 24 6 21.5442 6 18.5147C6 17.0599 6.57791 15.6647 7.6066 14.636L14.636 7.6066C15.6647 6.57791 17.0599 6 18.5147 6C20.9504 6 23.0152 7.58748 23.7311 9.78421L28.2023 5.31307C26.1626 2.1184 22.5861 0 18.5147 0Z" class="fill-white group-hover:fill-[#394149] duration-300"></path>
                     <path d="M39.364 22.3934C38.3353 23.4221 36.9401 24 35.4853 24C33.05 24 30.9853 22.413 30.2692 20.2167L25.7982 24.6877C27.838 27.8819 31.4143 30 35.4853 30C38.5314 30 41.4527 28.7899 43.6066 26.636L62.636 7.6066C63.6647 6.57791 65.0599 6 66.5147 6C69.5442 6 72 8.45584 72 11.4853C72 12.9401 71.4221 14.3353 70.3934 15.364L63.364 22.3934C62.3353 23.4221 60.9401 24 59.4853 24C57.0498 24 54.985 22.4127 54.269 20.2162L49.798 24.6873C51.8377 27.8818 55.4141 30 59.4853 30C62.5314 30 65.4527 28.7899 67.6066 26.636L74.636 19.6066C76.7899 17.4527 78 14.5314 78 11.4853C78 5.14214 72.8579 0 66.5147 0C63.4686 0 60.5473 1.21005 58.3934 3.36396L39.364 22.3934Z" class="fill-[#394149] group-hover:fill-white duration-300"></path> 
@@ -154,7 +238,7 @@
             <!-- menu -->
             <nav 
                 id="nav"
-                class="text-awa-2 font-normal hidden lg:flex justify-between absolute w-[600px] left-[calc(50%-300px)] gap-1"
+                class="text-gray-300 font-normal hidden lg:flex justify-between absolute w-[600px] left-[calc(50%-300px)] gap-1 select-none"
             >
                 <div bind:this={indicator} class="awa-slide opacity-0 -top-4 absolute will-change-transform">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 7.41421L6.41421 6L12.0711 11.6569L17.7279 6L19.1421 7.41421L12.0711 14.4853L5 7.41421Z" fill="currentColor" /><path d="M19 16.3432H5V18.3432H19V16.3432Z" fill="currentColor" /></svg>
@@ -162,7 +246,7 @@
                 { #each constNav as { url , text } }
                     <a 
                         aria-current={$page.url.pathname === url ? 'page' : undefined}
-                        class="link p-2 uppercase duration-300 mix-blend-difference" 
+                        class="link p-2 uppercase duration-300 mix-blend-difference hover:text-awa-2" 
                         href="{ url }"
                     > 
                         { text } 
@@ -191,20 +275,26 @@
         <!-- mobile menu -->
         { #if burger }
             <div 
-                class="container lg:hidden grid grid-cols-1 px-4 mx-auto mt-5 text-gray-300"
+                id="navMobile"
+                class="container lg:hidden grid grid-cols-1 px-10 mx-auto mt-5 text-gray-300 relative select-none"
                 transition:slide
             >
+                <div 
+                    bind:this={indicatorMobile}
+                    class="awa-slide-mobile absolute left-1 py-6 opacity-0 will-change-transform">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.41421 5L6 6.41421L11.6569 12.0711L6 17.7279L7.41421 19.1421L14.4853 12.0711L7.41421 5Z" fill="currentColor" /><path d="M16.3432 19V5H18.3432V19H16.3432Z" fill="currentColor" /></svg>
+                </div>
                 { #each constNav as { url , text } }
-                    <div class="py-6 relative">
-                        <a 
-                            aria-current={$page.url.pathname === url ? 'page' : undefined}
-                            href="{ url }" 
-                            class="link duration-300 hover:text-awa-2 rounded-lg absolute inset-0 hover:translate-x-3"
-                        >
-                            { text } 
-                        </a>
-                    </div>
-                {/each }
+                    <a 
+                        on:click={()=>burger=false}
+                        on:click={()=>burger ? foo=true : foo=getScroll()}
+                        aria-current={$page.url.pathname === url ? 'page' : undefined}
+                        href="{ url }" 
+                        class="py-6 relative duration-300 hover:text-awa-2 rounded-lg hover:translate-x-3"
+                    >
+                        { text } 
+                    </a>
+                { /each }
             </div>
         { /if }
   
@@ -246,11 +336,6 @@
         @apply
         relative m-auto h-5 w-5 fill-gray-500 duration-300 
         group-hover:-rotate-90 group-hover:fill-blue-600
-    }
-
-    .link {
-        @apply
-        relative
     }
 
     /* 

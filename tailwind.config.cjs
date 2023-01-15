@@ -2,6 +2,13 @@
 module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
+		container: {
+			padding: {
+				DEFAULT: '2rem',
+				sm: '3rem',
+				lg: '8rem',
+			}
+		},
 		extend: {
 			colors: {
 				/* eerie black  #1b1f24 */ 'awa-1': 'rgba(27, 31, 36, 1)',
