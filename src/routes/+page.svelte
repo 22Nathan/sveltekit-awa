@@ -2,6 +2,7 @@
 <script>
 
 	import Hero from "$lib/components/Hero.svelte"
+	import Blog from "$lib/components/Blog.svelte"
 	import Section1 from "$lib/components/Section1.svelte"
 
 </script>
@@ -14,7 +15,8 @@
 	</svelte:head>
 
 	<Hero/>
-	<Section1/>
+	<Blog/>
+	<!-- <Section1/> -->
 
 
 

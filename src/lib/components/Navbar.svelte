@@ -306,7 +306,7 @@
   
     .awa-scrolled {
         @apply
-        border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] backdrop-blur-sm;
+        border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] backdrop-blur-md;
     }
   
     .awa-burger1 {
