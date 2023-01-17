@@ -5,23 +5,16 @@
 
     import { constBlog } from "$lib/const/const"
 
+    import Counter from "$lib/components-sub/Counter.svelte"
+
 
     onMount(()=>{
-        constBlog.forEach(blog => {
-            formatDate(blog.date)
-        })
     })
 
-    /** @param {string} dateToConvert*/
-    function formatDate(dateToConvert) {
-        const array = dateToConvert.split('/')
-        console.log(array);
-    }
 
 </script>
 
 <!-- --------------------------------------- -->
-
 
     <div class="py-12">
         <div class="container m-auto px-6 md:px-12 xl:px-6">
@@ -39,7 +32,7 @@
 
                 <div class="lg:w-3/4 xl:w-2/4 lg:mx-auto">
                     <div class="group relative -mx-4 sm:-mx-8 p-6 sm:p-8 rounded-3xl bg-transparent border border-transparent shadow-none hover:border-gray-700 hover:bg-gray-800 shadow-transparent hover:shadow-gray-600/10 sm:gap-8 sm:flex transition duration-300 hover:z-10">
-                        <div class="sm:w-2/6 rounded-3xl overflow-hidden transition-all duration-500 group-hover:rounded-xl">
+                        <div class="sm:w-2/6 rounded-3xl overflow-hidden transition-all duration-500 group-hover:rounded-xl grayscale">
                             <img
                                 src="{img}"
                                 alt="art cover"
@@ -52,7 +45,7 @@
                         
                         <div class="sm:p-2 sm:pl-0 sm:w-4/6">
                             <span class="mt-4 mb-2 inline-block font-medium text-gray-500 sm:mt-0">
-                                {date} | dd/mm/yyyy
+                                {date}
                             </span>
                             <h3 class="text-2xl font-semibold text-white">
                                 {title}
@@ -65,7 +58,7 @@
 
                                 { #each tags as tag }
 
-                                    <div class="px-3 py-1 rounded-full border text-sm font-medium text-primary transition duration-300 hover:border-transparent hover:bg-primary hover:text-white border-gray-700 text-gray-300">
+                                    <div class="px-3 py-1 rounded-full border text-sm font-medium text-primary transition duration-300 hover:border-transparent hover:bg-gray-700 cursor-pointer hover:text-white border-gray-700 text-gray-300">
                                         {tag}
                                     </div>
                                     

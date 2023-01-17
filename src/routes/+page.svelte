@@ -1,9 +1,14 @@
 
 <script>
 
+	import { onMount } from "svelte"
+
 	import Hero from "$lib/components/Hero.svelte"
 	import Blog from "$lib/components/Blog.svelte"
-	import Section1 from "$lib/components/Section1.svelte"
+	// import Section from "$lib/components/Section.svelte"
+
+	// /** @type {import('./$types').PageData} */
+	// export let data
 
 </script>
 
@@ -16,7 +21,7 @@
 
 	<Hero/>
 	<Blog/>
-	<!-- <Section1/> -->
+	<!-- <Section/> -->
 
 
 

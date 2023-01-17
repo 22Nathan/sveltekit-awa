@@ -1,7 +1,7 @@
 
 <script>
 
-    import CardArrowTr from "$lib/components-sub/CardArrowTr.svelte"
+    import CardArrow from "$lib/components-sub/CardArrow.svelte"
 
 </script>
 
@@ -27,7 +27,7 @@
             </header>
             <div class="relative z-30 animatable animate-fade-up in-viewport">
                 <a href="/about-me" rel="noreferrer" class="awa-card-transparent-blur block h-full group">
-                    <CardArrowTr/>
+                    <CardArrow/>
                     <h3 class="title text-3xl mb-4">
                         4 ways to improve your frontend workflow
                     </h3>
