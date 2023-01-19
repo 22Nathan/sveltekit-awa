@@ -1,7 +1,45 @@
 
 <script>
 
+    import { enhance } from '$app/forms';
+    import { page } from '$app/stores'
+
+    import gsap from 'gsap';
+
 	import Counter from "$lib/components-sub/Counter.svelte"
+
+    // ---------------------------------------
+
+    let tl = gsap.timeline({})
+
+    function gsap_rotate(){
+        if(tl.isActive()) return
+        // @ts-ignore
+        tl.to(".gsap-rotate", {rotate:(gsap.getProperty(".gsap-rotate", 'rotate')+90), duration:.4})
+        
+    }
+
+    // ---------------------------------------
+
+    /** @param {any} event */
+    async function submitHandler(event){
+
+        const form = event.target
+
+        if(!form) return
+
+        const data = new FormData(form)
+
+        let res = await fetch(form.action, {
+            method: form.method,
+            body: data,
+        })
+
+        console.log(res);
+        
+    }
+
+    // ---------------------------------------
 
 </script>
 
@@ -20,30 +58,44 @@
         </p>
 
         <div class="relative mx-auto flex items-center justify-center">
+
             <div class="absolute inset-0 flex flex-wrap blur-3xl opacity-70">
                 <div aria-hidden="true" class="h-1/2 w-1/2 bg-[rgb(21,101,192)]"></div>
                 <div aria-hidden="true" class="h-1/2 w-1/2 bg-purple-500"></div>
                 <div aria-hidden="true" class="h-1/2 w-1/2 rounded-bl-full bg-[rgb(113,97,239)]"></div>
                 <div aria-hidden="true" class="h-1/2 w-1/2 rounded-br-full bg-[rgb(149,127,239)]"></div>
             </div>
-            <div class="flex h-40 w-40 rounded-full border border-white/20 bg-white/10 items-center justify-center align-middle">
-                <!-- <svg class="relative m-auto" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.325 3.05011L8.66741 20.4323L10.5993 20.9499L15.2568 3.56775L13.325 3.05011Z" fill="currentColor" />
-                    <path d="M7.61197 18.3608L8.97136 16.9124L8.97086 16.8933L3.87657 12.1121L8.66699 7.00798L7.20868 5.63928L1.04956 12.2017L7.61197 18.3608Z" fill="currentColor" />
-                    <path d="M16.388 18.3608L15.0286 16.9124L15.0291 16.8933L20.1234 12.1121L15.333 7.00798L16.7913 5.63928L22.9504 12.2017L16.388 18.3608Z" fill="currentColor" />
-                </svg> -->
+
+            <div class="flex h-32 w-32 items-center justify-center align-middle">
                 <Counter/>
             </div>
+
+            <div 
+                on:mouseenter={()=>{gsap_rotate()}}
+                class="gsap-rotate absolute top-0 h-32 w-32 rotate-45 border border-white/20 bg-white/5 will-change-transform hover:scale-105 active:scale-95 duration-300"
+            >
+                <form 
+                    on:submit|preventDefault={submitHandler}
+                    method="POST" 
+                    action="?/increment" 
+                    class="z-30 w-full h-full"
+                >   
+                    <button class="h-full w-full">
+                </form>
+            </div>
+
         </div>
 
         <div class="pl-0">
+            <!-- 
             <div 
                 class="
                     relative py-32
                     before:absolute before:inset-0 before:mx-auto before:h-full before:w-px 
                     before:bg-gradient-to-b before:from-white/20 before:via-white/10"
             >
-            </div>
+            </div> 
+            -->
         </div>
 
     </header>
