@@ -35,7 +35,9 @@
             body: data,
         })
 
-        console.log(res);
+        let text = await res.text()
+
+        console.log(text);
         
     }
 

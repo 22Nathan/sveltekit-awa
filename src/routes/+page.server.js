@@ -36,7 +36,7 @@ export async function load({ params }) {
 /** @type {import('./$types').Actions} */
 export const actions = {
 
-	increment: async (event) => {
+	increment: async ({ request }) => {
 
         function getDateNow() {
             let dateNow = new Date(), month, day, year
@@ -59,7 +59,6 @@ export const actions = {
         })
 
         return prismaGetTotalLike()
-
     },
 
 }
