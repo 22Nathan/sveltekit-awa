@@ -1,27 +1,25 @@
 
 <script>
 
-	import { spring } from 'svelte/motion'
-	import { page } from '$app/stores'
-	import { onMount } from 'svelte'
+    // ---------------------------------------
+    // IMPORT
 
+	import { spring } from 'svelte/motion'
+	import { awa_store_total } from '$lib/js/stores'
     import toast , { Toaster } from 'svelte-french-toast'
 
-	// onMount(()=>{
-	// 	$page.subscribe( (/** @type {any} */ value) => {
-	// 		console.log(value)
-	// 	})
-	// })
-
-	let count = $page.data.total
+    // ---------------------------------------
+    // LET & CONST & VAR	
 
 	const resultCount = spring()
-
-	$: resultCount.set(count)
+	$: resultCount.set($awa_store_total)
 	$: offset = modulo($resultCount, 1)
 
+    // ---------------------------------------
+    // FUNCTIONS RANDOM
+
 	/** 
-    * @param {number} n 
+    * @param {number} n, m 
     * @param {number} m 
     */
 	function modulo(n, m) { return ((n % m) + m) % m }
@@ -58,35 +56,6 @@
 		display: flex;
 		margin: 1rem 0;
 	}
-
-	/*
-	.counter button {
-		width: 2em;
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 0;
-		background-color: transparent;
-		touch-action: manipulation;
-		font-size: 2rem;
-	}
-
-	.counter button:hover {
-		background-color: var(--color-bg-1);
-	}
-
-	svg {
-		width: 25%;
-		height: 25%;
-	}
-
-	path {
-		vector-effect: non-scaling-stroke;
-		stroke-width: 2px;
-		stroke: #444;
-	} 
-	*/
 
 	.counter-viewport {
 		width: 8em;

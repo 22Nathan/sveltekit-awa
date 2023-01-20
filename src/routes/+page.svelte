@@ -1,8 +1,18 @@
 
 <script>
 
-	import Hero from "$lib/components/Hero.svelte"
-	import Blog from "$lib/components/Blog.svelte"
+    // ---------------------------------------
+    // IMPORT	
+
+	import { page } from '$app/stores'
+	import { awa_store_total } from '$lib/js/stores'
+	import Hero from "$lib/components/home/Hero.svelte"
+	import Blog from "$lib/components/home/Blog.svelte"
+
+    // ---------------------------------------
+    // LET & CONST & VAR	
+
+	awa_store_total.set($page.data.total)
 
 </script>
 

@@ -1,14 +1,21 @@
 
 <script>
 
-    import { enhance } from '$app/forms';
-    import { page } from '$app/stores'
+    // ---------------------------------------
+    // IMPORT
 
+    import { awa_store_total } from '$lib/js/stores'
     import gsap from 'gsap';
-
-	import Counter from "$lib/components-sub/Counter.svelte"
+	import Counter from "$lib/components/home/Counter.svelte"
 
     // ---------------------------------------
+    // LET & CONST & VAR
+
+    // ---------------------------------------
+    // FUNCTIONS RANDOM
+
+    // ---------------------------------------
+    // GSAP
 
     let tl = gsap.timeline({})
 
@@ -20,12 +27,12 @@
     }
 
     // ---------------------------------------
+    // FORM ACTIONS
 
     /** @param {any} event */
     async function submitHandler(event){
 
         const form = event.target
-
         if(!form) return
 
         const data = new FormData(form)
@@ -35,13 +42,10 @@
             body: data,
         })
 
-        let text = await res.text()
-
-        console.log(text);
+        let result = await res.json()
+        awa_store_total.update(n => Number.parseInt(result.data.slice(1,-1)))
         
     }
-
-    // ---------------------------------------
 
 </script>
 
@@ -51,12 +55,12 @@
         
         <h1 class="title text-5xl md:text-7xl lg:text-8xl max-w-[720px] mb-10">
             <span id="awa-text-gradient" class="awa-text-gradient relative z-30 bg-gradient-to-r from-awa-3 via-awa-4 to-awa-3">
-                Nathan ROSSI
+                Nathan ROSSI {$awa_store_total}
             </span>
         </h1>
 
         <p class="text-xl md:text-3xl mb-20 lg:mb-24 relative z-30 mix-blend-color-dodge max-w-[520px] text-[#e5e5e5]">
-            Full-Stack Developper
+            Full-Stack Developper 
         </p>
 
         <div class="relative mx-auto flex items-center justify-center">
@@ -73,7 +77,8 @@
             </div>
 
             <div 
-                on:mouseenter={()=>{gsap_rotate()}}
+                on:click={()=>{gsap_rotate()}}
+                on:keypress
                 class="gsap-rotate absolute top-0 h-32 w-32 rotate-45 border border-white/20 bg-white/5 will-change-transform hover:scale-105 active:scale-95 duration-300"
             >
                 <form 
@@ -86,18 +91,6 @@
                 </form>
             </div>
 
-        </div>
-
-        <div class="pl-0">
-            <!-- 
-            <div 
-                class="
-                    relative py-32
-                    before:absolute before:inset-0 before:mx-auto before:h-full before:w-px 
-                    before:bg-gradient-to-b before:from-white/20 before:via-white/10"
-            >
-            </div> 
-            -->
         </div>
 
     </header>

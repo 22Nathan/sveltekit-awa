@@ -1,16 +1,10 @@
 
 <script>
     
-    import { onMount } from "svelte"
+    // ---------------------------------------
+    // IMPORT    
 
     import { constBlog } from "$lib/const/const"
-
-    import Counter from "$lib/components-sub/Counter.svelte"
-
-
-    onMount(()=>{
-    })
-
 
 </script>
 
@@ -32,7 +26,7 @@
 
                 <div class="lg:w-3/4 xl:w-2/4 lg:mx-auto">
                     <div class="group relative -mx-4 sm:-mx-8 p-6 sm:p-8 rounded-3xl bg-transparent border border-transparent shadow-none hover:border-gray-700 hover:bg-gray-800 shadow-transparent hover:shadow-gray-600/10 sm:gap-8 sm:flex transition duration-300 hover:z-10">
-                        <div class="sm:w-2/6 rounded-3xl overflow-hidden transition-all duration-500 group-hover:rounded-xl grayscale">
+                        <div class="sm:w-2/6 rounded-3xl overflow-hidden transition-all duration-500 group-hover:rounded-xl grayscale group-hover:grayscale-0">
                             <img
                                 src="{img}"
                                 alt="art cover"
