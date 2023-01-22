@@ -6,7 +6,6 @@
 
 	import { spring } from 'svelte/motion'
 	import { awa_store_total } from '$lib/js/stores'
-    import toast , { Toaster } from 'svelte-french-toast'
 
     // ---------------------------------------
     // LET & CONST & VAR	
@@ -27,8 +26,6 @@
 </script>
 
 <!-- --------------------------------------- -->
-
-    <Toaster/>
 
     <div class="counter">
 

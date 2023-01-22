@@ -1,15 +1,19 @@
 
 <script>
 
+    // ---------------------------------------
+    // IMPORT    
+
     import { onMount } from "svelte"
     import { page } from '$app/stores';
     import { slide } from "svelte/transition"
     import { gsap } from "gsap"
-    
     import getScroll    from "$lib/js/getScroll"
     import clickOutside from "$lib/js/clickOutside"
-
     import { constNav } from "$lib/const/const"
+
+    // ---------------------------------------
+    // LET & CONST & VAR
   
     let burger   = false
     let darkmode = true
@@ -25,6 +29,20 @@
     let tlActive = gsap.timeline()
 
     $: run = runAnimateNavMobile(burger)
+
+    // ---------------------------------------
+    // GSAP
+    
+    function gsap_blurScreen(){
+        let tl = gsap.timeline({})
+
+        tl
+        .to("body", { filter: "blur(100px)", duration:.3 })
+        .to("body", { filter: "blur(0px)", duration:.4, delay:.3, onComplete: function() { gsap.set(this.targets(), { clearProps: "all" } )} })
+    }
+
+    // ---------------------------------------
+    // FUNCTIONS
   
     onMount(
         ()=>{    
@@ -196,7 +214,7 @@
   
 <!-- --------------------------------------- -->
 
-    <nav class="fixed border-b border-transparent transition-colors duration-300 py-5 top-0 inset-x-0 z-50" 
+    <nav class="fixed border-b border-transparent transition-colors duration-300 py-3 top-0 inset-x-0 z-50" 
         class:awa-scrolled="{foo === true}"
         use:clickOutside
         on:click_outside={()=>burger=false}
@@ -238,7 +256,7 @@
             <!-- menu -->
             <nav 
                 id="nav"
-                class="text-gray-300 font-normal hidden lg:flex justify-between absolute w-[600px] left-[calc(50%-300px)] gap-1 select-none"
+                class="text-gray-300 font-normal hidden lg:flex justify-between absolute w-[600px] left-[calc(50%-300px)] gap-1 select-none text-sm"
             >
                 <div bind:this={indicator} class="awa-slide opacity-0 -top-4 absolute will-change-transform">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 7.41421L6.41421 6L12.0711 11.6569L17.7279 6L19.1421 7.41421L12.0711 14.4853L5 7.41421Z" fill="currentColor" /><path d="M19 16.3432H5V18.3432H19V16.3432Z" fill="currentColor" /></svg>
@@ -258,6 +276,7 @@
             <button 
                 class="group awa-btn"
                 on:click={()=>darkmode=!darkmode}
+                on:click={()=>gsap_blurScreen()}
             >
                 { #if darkmode }
                     <svg xmlns="http://www.w3.org/2000/svg" class="transition awa-svg-sun" viewBox="0 0 20 20" fill="currentColor">

@@ -1,23 +1,27 @@
 
 <script>
+// @ts-nocheck
+
 
     // ---------------------------------------
     // IMPORT
 
+    import { onMount } from 'svelte'
     import { awa_store_total } from '$lib/js/stores'
-    import gsap from 'gsap';
+    import toast, { Toaster } from 'svelte-french-toast'
+    import gsap from 'gsap'
+    import { Lottie } from 'lottie-svelte';
 	import Counter from "$lib/components/home/Counter.svelte"
 
     // ---------------------------------------
-    // LET & CONST & VAR
-
-    // ---------------------------------------
-    // FUNCTIONS RANDOM
+    // ONMOUNT
 
     // ---------------------------------------
     // GSAP
 
-    let tl = gsap.timeline({})
+    const tl = gsap.timeline({})
+    const t2 = gsap.timeline({})
+    const t3 = gsap.timeline({})
 
     function gsap_rotate(){
         if(tl.isActive()) return
@@ -26,24 +30,46 @@
         
     }
 
+    function gsap_scale(){
+        if(t2.isActive()) return
+        t2
+        .to(".gsap-scale", {scale:1.10, duration:.4})
+        .to(".gsap-scale", {scale:1, duration:.4})
+    }
+
     // ---------------------------------------
     // FORM ACTIONS
 
     /** @param {any} event */
     async function submitHandler(event){
 
-        const form = event.target
-        if(!form) return
+        async function saveLike(){
 
-        const data = new FormData(form)
+            const form = event.target
+            if(!form) return
 
-        let res = await fetch(form.action, {
-            method: form.method,
-            body: data,
-        })
+            const data = new FormData(form)
 
-        let result = await res.json()
-        awa_store_total.update(n => Number.parseInt(result.data.slice(1,-1)))
+            let res = await fetch(form.action, {
+                method: form.method,
+                body: data,
+            })
+
+            let result = await res.json()
+            awa_store_total.update(n => Number.parseInt(result.data.slice(1,-1)))
+
+            return res.ok
+
+        }
+
+        toast.promise(
+            saveLike(),
+            { loading: 'Saving...', success: 'Like saved!', error: 'Could not save.', },
+            { 
+                style: 'border-radius: 200px; background: #333; color: #fff;',
+                position: "bottom-right"
+            },
+        )
         
     }
 
@@ -51,11 +77,19 @@
 
 <!-- --------------------------------------- -->
 
+    <Toaster/>
+
+
+    <!-- <div class="absolute left-0 right-0 top-[450px] m-auto overflow-hidden -z-10">
+        <Lottie path="./src/lib/lotties/87661-lines.json"/>
+    </div> -->
+
+
     <header class="container mx-auto pt-36 pb-32 md:pb-36 md:pt-56 text-center flex flex-col items-center cursor-default relative">
         
         <h1 class="title text-5xl md:text-7xl lg:text-8xl max-w-[720px] mb-10">
             <span id="awa-text-gradient" class="awa-text-gradient relative z-30 bg-gradient-to-r from-awa-3 via-awa-4 to-awa-3">
-                Nathan ROSSI {$awa_store_total}
+                Nathan ROSSI
             </span>
         </h1>
 
@@ -78,6 +112,7 @@
 
             <div 
                 on:click={()=>{gsap_rotate()}}
+                on:click={()=>{gsap_scale()}}
                 on:keypress
                 class="gsap-rotate absolute top-0 h-32 w-32 rotate-45 border border-white/20 bg-white/5 will-change-transform hover:scale-105 active:scale-95 duration-300"
             >
@@ -91,6 +126,10 @@
                 </form>
             </div>
 
+        </div>
+
+        <div class="z-20 grid place-items-center h-10 w-10 border border-white/20 bg-white/5 backdrop-blur-sm rotate-45">
+            <h1 class="gsap-scale -rotate-45 will-change-transform">❤️</h1>
         </div>
 
     </header>
