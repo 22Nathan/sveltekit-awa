@@ -9,7 +9,12 @@ export const constNav = [
 ]
 
 export const constSkills = [
-    { text : 'Python' , tech : [ 'pandas' , 'numpy' , 'flask' ] },
+    { text : 'Programming languages' },
+    { text : 'Web languages'         },
+    { text : 'Scripting languages'   },
+    { text : 'Databases'             },
+    { text : 'Frameworks'            },
+    { text : 'Others'                },
 ]
 
 export const constSkillsIcons = [

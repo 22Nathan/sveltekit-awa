@@ -6,9 +6,9 @@ export function horizontalLoopSlider(items, config) {
 
     function setMiddle(mid) {
         items.forEach(
-            item => item.classList.remove("middle-item")
+            item => item?.classList.remove("middle-item")
         );
-        items[mid].classList.add("middle-item");
+        items[mid]?.classList.add("middle-item");
     }
 
 	items = gsap.utils.toArray(items);

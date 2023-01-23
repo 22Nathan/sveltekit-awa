@@ -1,17 +1,15 @@
 
 
 <script>
-// @ts-nocheck
-
 
     // ---------------------------------------
     // IMPORT
 
     import { onMount } from "svelte"
     import gsap from "gsap"
-    import { horizontalLoop } from "$lib/js/horizontalLoop"
     import { horizontalLoopSlider } from "$lib/js/horizontalLoopSlider"
     import { constSkillsIcons } from "$lib/const/const"
+    import { constSkills } from "$lib/const/const"
 
     // ---------------------------------------
     // LET & CONST & VAR
@@ -42,7 +40,7 @@
     function gsap_infinite_slider(){
 
         const all_carousel_item = gsap.utils.toArray(".carouselitem")
-        const loop = horizontalLoopSlider(all_carousel_item, {paused: true, draggable: true})
+        const loop = horizontalLoopSlider(all_carousel_item, { paused: true, draggable: true, paddingRight:10, })
 
         all_carousel_item.forEach((carouselitem, i) => 
             carouselitem.addEventListener("click", () => 
@@ -50,15 +48,15 @@
             )
         )
 
-        document.querySelector(".next").addEventListener("click", () => loop.next({duration: 0.4, ease: "power1.inOut"}))
-        document.querySelector(".prev").addEventListener("click", () => loop.previous({duration: 0.4, ease: "power1.inOut"}))
+        document.querySelector(".next")?.addEventListener("click", () => loop.next({duration: 0.4, ease: "power1.inOut"}))
+        document.querySelector(".prev")?.addEventListener("click", () => loop.previous({duration: 0.4, ease: "power1.inOut"}))
 
-        function setMiddle(mid) {
-            all_carousel_item.forEach( carouselitem => 
-                carouselitem.classList.remove("middle-item")
-            )
-            all_carousel_item[mid].classList.add("middle-item");
-        }
+        // function setMiddle(mid) {
+        //     all_carousel_item.forEach( carouselitem => 
+        //         carouselitem.classList.remove("middle-item")
+        //     )
+        //     all_carousel_item[mid].classList.add("middle-item");
+        // }
 
     }
 
@@ -69,9 +67,9 @@
 
         const el = document.querySelector(".sticky")
         const observer = new IntersectionObserver( 
-            ([e]) => e.target.firstElementChild.classList.toggle("is-pinned", e.intersectionRatio < 1), { threshold: [1] }
+            ([e]) => e.target.firstElementChild?.classList.toggle("is-pinned", e.intersectionRatio < 1), { threshold: [1] }
         )
-        observer.observe(el);
+        if(el != null) observer.observe(el);
 
     }
 
@@ -128,37 +126,32 @@
         <div class="h-[10000px]">
             <div class="sticky top-[-1px] pt-[71px] pb-2">
                 
-                <div class="relative flex items-center m-auto overflow-hidden h-8 px-8 bg-transparent border-y border-y-transparent duration-200">
-                    <div class="relative flex m-auto w-full overflow-hidden max-w-[calc(100%-64px)]" style="-webkit-mask-image: linear-gradient( to right, transparent 0%, black 16px, black calc(100% - 24px), transparent 100% );">
-                        
-                        <button class="prev absolute top-0 left-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                            </svg>                              
+                <div class="relative w-full">
+                    <div class="relative flex items-center mx-auto px-8 max-w-3xl w-full" style="-webkit-box-align: center;">
+                        <div class="max-w-7 max-h-7 shrink"></div>
+                        <div class="w-px h-6 shrink-0 mx-6 bg-white/20 hidden sm:block"></div>
+                        <div class="flex items-center flex-1 overflow-hidden" style="-webkit-box-align: center; -webkit-mask-image: linear-gradient( to right, transparent 0%, black 16px, black calc(100% - 64px), transparent 100% );">
+                            <div class="relative flex items-center overflow-x-hidden scroll-smooth shadow-none outline-none" style="-webkit-box-align: center;">
+                                { #each constSkills as { text } }
+                                    <div 
+                                        class="
+                                            relative carouselitem text-sm leading-normal whitespace-nowrap 
+                                            h-8 px-4 cursor-pointer select-none items-center flex m-0
+                                            "
+                                    > { text } </div>
+                                { /each }
+                            </div>
+                        </div>
+                        <button class="prev h-8 w-8 flex items-center justify-center">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98" class="rotate-180">
+                                <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
+                            </svg>
                         </button>
-                        <button class="next absolute top-0 right-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                            </svg>                              
+                        <button class="next h-8 w-8 flex items-center justify-center">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98">
+                                <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
+                            </svg>
                         </button>
-                        
-                        <div class="carouselitem text-sm">aaa</div>
-                        <div class="carouselitem text-sm">bbb</div>
-                        <div class="carouselitem text-sm">ccc</div>
-                        <div class="carouselitem text-sm">ddd</div>
-                        <div class="carouselitem text-sm">eee</div>
-                        <div class="carouselitem text-sm">fff</div>
-                        <div class="carouselitem text-sm">ggg</div>
-                        <div class="carouselitem text-sm">hhh</div>
-                        <div class="carouselitem text-sm">iii</div>
-                        <div class="carouselitem text-sm">jjj</div>
-                        <div class="carouselitem text-sm">kkk</div>
-                        <div class="carouselitem text-sm">lll</div>
-                        <div class="carouselitem text-sm">mmm</div>
-                        <div class="carouselitem text-sm">nnn</div>
-                        <div class="carouselitem text-sm">ooo</div>
-                        <div class="carouselitem text-sm">ppp</div>
-
                     </div>
                 </div>
 
@@ -175,6 +168,8 @@
         background: rgb(19, 19, 21);
         border-color: rgb(34, 35, 38);
     }
+
+    /* --- */
 
     .fondg1 {
         position: absolute;
@@ -263,6 +258,17 @@
         width: 165px;
         height: 100%;
         z-index: 1;
+    }
+
+    .cont::after {
+        /* content: "";
+        position: absolute;
+        right: 50px;
+        top: 0px;
+        background: linear-gradient(270deg, rgb(27, 31, 36) 2%, rgba(27, 31, 36, 0) 100%);
+        width: 165px;
+        height: 100%;
+        z-index: 1;   */
     }
 
 </style>
