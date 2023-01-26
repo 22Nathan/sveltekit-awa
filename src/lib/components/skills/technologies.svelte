@@ -131,15 +131,16 @@
                         <div class="w-px h-6 shrink-0 mx-6 bg-white/20 hidden sm:block"></div>
                         <div class="flex items-center flex-1 overflow-hidden" style="-webkit-box-align: center; -webkit-mask-image: linear-gradient( to right, transparent 0%, black 16px, black calc(100% - 64px), transparent 100% );">
                             <div class="relative flex items-center overflow-x-hidden scroll-smooth shadow-none outline-none" style="-webkit-box-align: center;">
-                                { #each constSkills as { text } }
-                                    <div 
+                                { #each constSkills as { text , anchor } }
+                                    <a 
+                                        href="#{anchor}" target="_self"
                                         class="
                                         relative carouselitem text-sm leading-normal whitespace-nowrap
                                         h-8 px-4 cursor-pointer select-none items-center flex m-0
                                         text-[#8a8f98] hover:text-[#d0d6e0] active:text-[#f7f8f8] transition-colors"
                                     > 
                                         { text } 
-                                    </div>
+                                    </a>
                                 { /each }
                             </div>
                         </div>
@@ -166,9 +167,9 @@
 
                 <div id="contcards" class="flex flex-col duration-200">
 
-                    { #each constSkills as { text , list } , i }
+                    { #each constSkills as { text , list , anchor } , i }
 
-                        <h1 id="awa-anchor-{i}" class="pb-3 pt-10"> { text } </h1>
+                        <h1 id="{anchor}" class="anchor pb-3 pt-10"> { text } </h1>
                             
                         <div class="awa-block-{i} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
 
@@ -243,3 +244,10 @@
 
 <!-- --------------------------------------- -->
 
+<style type="postcss">
+
+    .anchor {
+        scroll-margin-top: 100px;
+    }
+
+</style>
