@@ -11,7 +11,9 @@ body  { @apply overflow-x-hidden min-h-screen scroll-smooth bg-awa-1 text-awa-2 
 .awa-section-sidebar:after { @apply content-[""] bg-[linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.15)25%,hsla(0,0%,100%,.15)75%,hsla(0,0%,100%,0))] w-[2px] absolute top-0 bottom-0 left-6 }
 .awa-section-sidebar.awa-exposed-line:after { @apply -top-64 }
 .awa-step-circle { @apply flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-bold text-[#050505] }
-.awa-card-transparent-blur { @apply rounded-md border border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,.5)] p-8 backdrop-blur transition-all duration-300 }
+.awa-card-transparent-blur { @apply rounded-md border border-[hsla(0,0%,100%,.1)] bg-[rgba(5,5,5,0.5)] p-8 backdrop-blur transition-all duration-300 }
 .awa-card-transparent-blur:hover { @apply border-white ease-in }
 
-
+/* Skills */
+.is-pinned { @apply bg-[rgb(19,19,21)] border border-[#ffffff1a] }
+.left-item { @apply text-[#f7f8f8] }

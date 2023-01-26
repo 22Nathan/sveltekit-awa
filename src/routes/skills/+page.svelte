@@ -4,7 +4,8 @@
     // ---------------------------------------
     // IMPORT	    
 
-    import Technologies from "$lib/components/skills/technologies.svelte"
+    import Hero from "$lib/components/skills/Hero.svelte"
+    import Technologies from "$lib/components/skills/Technologies.svelte"
 
     // ---------------------------------------
     // LET & CONST & VAR    
@@ -18,4 +19,5 @@
         <meta name="description" content="Skills" />
     </svelte:head>
 
+    <Hero/>
     <Technologies/>

@@ -8,8 +8,8 @@
     import { onMount } from "svelte"
     import gsap from "gsap"
     import { horizontalLoopSlider } from "$lib/js/horizontalLoopSlider"
-    import { constSkillsIcons } from "$lib/const/const"
     import { constSkills } from "$lib/const/const"
+	import ScrollTrigger from "gsap/dist/ScrollTrigger"
 
     // ---------------------------------------
     // LET & CONST & VAR
@@ -18,24 +18,14 @@
     // ONMOUNT
     
     onMount(()=>{
-        gsap_marquee()
         gsap_infinite_slider()
         is_element_sticky()
+        gsap_automate_sticky()
+        card_hover()
     })
 
     // ---------------------------------------
     // GSAP
-
-    function gsap_marquee(){
-        
-        const boxes1 = gsap.utils.toArray(".lineitem1")
-        const boxes2 = gsap.utils.toArray(".lineitem2")
-        const boxes3 = gsap.utils.toArray(".lineitem3")
-        const loop1 = horizontalLoopSlider(boxes1, { repeat: -1, paddingRight:10, speed:.5 })
-        const loop2 = horizontalLoopSlider(boxes2, { repeat: -1, paddingRight:10, speed:.4, reversed:true })
-        const loop3 = horizontalLoopSlider(boxes3, { repeat: -1, paddingRight:10, speed:.3 })
-
-    }
 
     function gsap_infinite_slider(){
 
@@ -50,13 +40,11 @@
 
         document.querySelector(".next")?.addEventListener("click", () => loop.next({duration: 0.4, ease: "power1.inOut"}))
         document.querySelector(".prev")?.addEventListener("click", () => loop.previous({duration: 0.4, ease: "power1.inOut"}))
+        document.querySelectorAll(".carouselitem").forEach((item) =>
+            item.addEventListener("click", () => loop.awaAddThis())
+        )
 
-        // function setMiddle(mid) {
-        //     all_carousel_item.forEach( carouselitem => 
-        //         carouselitem.classList.remove("middle-item")
-        //     )
-        //     all_carousel_item[mid].classList.add("middle-item");
-        // }
+        loop.awaAddThis()
 
     }
 
@@ -73,58 +61,69 @@
 
     }
 
+    function get_left_most_element(){
+
+        let all_carousel_item = document.querySelectorAll('.carouselitem') 
+        /** @type {Element|null} */
+        let left_most = null
+        all_carousel_item.forEach( el => {
+            if(!left_most){
+                left_most = el
+                return
+            }
+            if(el.getBoundingClientRect()['left'] < left_most.getBoundingClientRect()['left']) 
+                left_most = el
+
+        })
+
+    }
+
+    function gsap_automate_sticky(){
+
+        gsap.registerPlugin(ScrollTrigger)
+
+        for( let i = 0 ; i < constSkills.length ; i++ ){
+            ScrollTrigger.create({
+                trigger : `.awa-block-${i}`,
+                start: "top 30%",
+                end: "bottom",
+                // markers: true,
+                // onEnter: function() { document.querySelector(".next")?.click() } 
+            })
+        }
+
+    }
+
+    function card_hover(){
+
+        const cards = document.querySelectorAll('.awa-card')
+
+        cards.forEach( card  => {
+            // @ts-ignore
+            card.onmousemove = (/** @type {{ clientX: number; clientY: number; }} */ e) => {
+                const rect = card.getBoundingClientRect(),
+                x = e.clientX - rect.left,
+                y = e.clientY - rect.top
+                // @ts-ignore
+                card.style.setProperty("--mouse-x", `${x}px`)
+                // @ts-ignore
+                card.style.setProperty("--mouse-y", `${y}px`)
+            }
+        })
+
+    }
+
 </script>
 
 <!-- --------------------------------------- -->
 
-    <section class="pt-36 pb-32 md:pb-36 md:pt-56 relative">
+    <div class="relative">
 
-        <div class="contlines grid grid-rows-3 gap-2 relative select-none max-w-7xl overflow-hidden place-items-center mx-auto py-10">
-
-            <div class="row1 flex gap-2">
-                { #each constSkillsIcons as { text , url , fond } }
-                    <div class="lineitem1 w-20 h-20 rounded-xl">
-                        <div class={ fond }></div>
-                        <img src={ url } alt={ text } class="absolute z-10 inset-2/4 -translate-x-1/2 -translate-y-1/2 h-11 w-h-11">
-                    </div>
-                { /each }
-            </div>
-
-            <div class="row2 flex gap-2">
-                { #each constSkillsIcons as { text , url , fond } }
-                    <div class="lineitem2 w-20 h-20 rounded-xl">
-                        <div class={ fond }></div>
-                        <img src={ url } alt={ text } class="absolute z-10 inset-2/4 -translate-x-1/2 -translate-y-1/2 h-11 w-h-11">
-                    </div>
-                { /each }
-            </div>
-
-            <div class="row3 flex gap-2">
-                { #each constSkillsIcons as { text , url , fond } }
-                    <div class="lineitem3 w-20 h-20 rounded-xl">
-                        <div class={ fond }></div>
-                        <img src={ url } alt={ text } class="absolute z-10 inset-2/4 -translate-x-1/2 -translate-y-1/2 h-11 w-h-11">
-                    </div>
-                { /each }
-            </div>
-
-        </div>
-
-        <div class="container m-auto md:px-12 xl:px-6 pt-10">
-
-            <div class="space-y-2 text-center">
-                <h2 class="z-10 text-3xl font-bold md:text-4xl text-white">
-                    Technologies
-                </h2>
-                <p class="text-gray-300 lg:mx-auto lg:w-6/12">
-                    There are all technologies, frameworks and langages i worked with
-                </p>
-            </div>
-
-        </div>
+        <!-- <div class="hidden is-pinned left-item"></div> -->
 
         <div class="h-[10000px]">
-            <div class="sticky top-[-1px] pt-[71px] pb-2">
+
+            <div class="sticky top-[-1px] pt-[71px] pb-2 z-50">
                 
                 <div class="relative w-full">
                     <div class="relative flex items-center mx-auto px-8 max-w-3xl w-full" style="-webkit-box-align: center;">
@@ -135,19 +134,25 @@
                                 { #each constSkills as { text } }
                                     <div 
                                         class="
-                                            relative carouselitem text-sm leading-normal whitespace-nowrap 
-                                            h-8 px-4 cursor-pointer select-none items-center flex m-0
-                                            "
-                                    > { text } </div>
+                                        relative carouselitem text-sm leading-normal whitespace-nowrap
+                                        h-8 px-4 cursor-pointer select-none items-center flex m-0
+                                        text-[#8a8f98] hover:text-[#d0d6e0] active:text-[#f7f8f8] transition-colors"
+                                    > 
+                                        { text } 
+                                    </div>
                                 { /each }
                             </div>
                         </div>
-                        <button class="prev h-8 w-8 flex items-center justify-center">
+                        <button 
+                            on:click={()=>{get_left_most_element()}}
+                            class="prev h-8 w-8 flex items-center justify-center">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98" class="rotate-180">
                                 <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
                             </svg>
                         </button>
-                        <button class="next h-8 w-8 flex items-center justify-center">
+                        <button 
+                            on:click={()=>{get_left_most_element()}}
+                            class="next h-8 w-8 flex items-center justify-center">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98">
                                 <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
                             </svg>
@@ -156,119 +161,85 @@
                 </div>
 
             </div>
+
+            <div class="container mx-auto pt-14">
+
+                <div id="contcards" class="flex flex-col duration-200">
+
+                    { #each constSkills as { text , list } , i }
+
+                        <h1 id="awa-anchor-{i}" class="pb-3 pt-10"> { text } </h1>
+                            
+                        <div class="awa-block-{i} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+
+                            { #each list as { label , resume } }
+                                
+                                <div class="awa-card group relative flex rounded-2xl transition-shadow hover:shadow-md bg-[hsl(0deg_0%_100%/3%)] hover:shadow-black/5">
+                                    <div class="pointer-events-none">
+                                        <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-[hsla(0,0%,100%,.01)] stroke-[hsl(0deg_0%_100%/3%)]">
+                                                <defs>
+                                                    <pattern id=":R5ihd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="22">
+                                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                                    </pattern>
+                                                </defs>
+                                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R5ihd6:)"></rect>
+                                                <svg x="50%" y="22" class="overflow-visible">
+                                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                                </svg>
+                                            </svg>
+                                        </div>
+                                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r opacity-0 transition duration-300 group-hover:opacity-100 from-[#202D2E] to-[#303428]" style="-webkit-mask-image: radial-gradient(180px at var(--mouse-x) var(--mouse-y), white, transparent);">
+                                        </div>
+                                        <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="-webkit-mask-image: radial-gradient(180px at var(--mouse-x) var(--mouse-y), white, transparent);">
+                                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-[hsl(0deg_0%_100%/3%)] stroke-white/10">
+                                                <defs>
+                                                    <pattern id=":R1dihd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="22">
+                                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                                    </pattern>
+                                                </defs>
+                                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R1dihd6:)"></rect>
+                                                <svg x="50%" y="22" class="overflow-visible">
+                                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                                </svg>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 group-hover:ring-white/20"></div>
+                                    <div class="relative rounded-2xl px-4 <pt-16> pt-4 pb-4">
+                                        <div class="flex h-7 w-7 items-center justify-center rounded-full ring-1 backdrop-blur-[2px] transition duration-300 bg-white/7.5 ring-white/15 group-hover:bg-emerald-300/10 group-hover:ring-emerald-400">
+                                            <svg viewBox="0 0 20 20" aria-hidden="true" class="h-5 w-5 transition-colors duration-300 fill-white/10 stroke-zinc-400 group-hover:fill-emerald-300/10 group-hover:stroke-emerald-400">
+                                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M10.046 16H1.955a.458.458 0 0 1-.455-.459C1.5 13.056 3.515 11 6 11h.5"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15.454C7.5 12.442 9.988 10 13 10s5.5 2.442 5.5 5.454a.545.545 0 0 1-.546.546H8.045a.545.545 0 0 1-.545-.546Z"></path>
+                                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M6.5 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                                            </svg>
+                                        </div>
+                                        <h3 class="mt-4 text-sm font-semibold leading-7 text-white">
+                                            <h1>
+                                                <span class="absolute inset-0 rounded-2xl"></span>
+                                                { label }
+                                            </h1>
+                                        </h3>
+                                        <p class="mt-1 text-sm text-zinc-400">
+                                            { resume }
+                                        </p>
+                                    </div>
+                                </div>
+
+                            { /each }
+
+                        </div>
+
+                    { /each }
+
+                </div>
+
+            </div>
+
         </div>
 
-    </section>
+    </div>
 
 <!-- --------------------------------------- -->
 
-<style type="postcss">
-
-    .is-pinned { 
-        background: rgb(19, 19, 21);
-        border-color: rgb(34, 35, 38);
-    }
-
-    /* --- */
-
-    .fondg1 {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50%;
-        height: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        background: linear-gradient(124.31deg, rgb(70, 227, 183) 0.18%, rgb(82, 124, 172) 89.82%);
-        pointer-events: none;
-        filter: blur(30px);
-        opacity: 0.7; 
-    }
-
-    .fondg2 {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50%;
-        height: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        background: linear-gradient(285.49deg, rgb(245, 55, 249) -14.61%, rgb(247, 190, 43) 106.06%);
-        pointer-events: none;
-        filter: blur(30px);
-        opacity: 0.7;
-        overflow: visible;
-    }
-
-    .fondg3 {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50%;
-        height: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        background: linear-gradient(285.49deg, rgb(148, 151, 157) -14.61%, rgb(118, 124, 175) 106.06%);
-        pointer-events: none;
-        filter: blur(30px);
-        opacity: 0.7;
-        overflow: visible;
-    }
-
-    .fondg4 {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50%;
-        height: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        background: linear-gradient(90deg, rgb(255, 248, 85) 0.04%, rgb(70, 227, 183) 46.04%);
-        pointer-events: none;
-        filter: blur(30px);
-        opacity: 0.7;
-        overflow: visible;
-    }
-
-    .lineitem1, .lineitem2, .lineitem3 {
-        box-shadow: rgb(255 255 255 / 25%) 0px 1px 1px 0px inset;
-        background: linear-gradient(155.91deg, rgb(24, 25, 28) 21.92%, rgb(33, 34, 37) 77.49%);
-        @apply will-change-transform relative
-    } 
-
-    .contlines::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0px;
-        background: linear-gradient(270deg, rgb(27, 31, 36) 2%, rgba(27, 31, 36, 0) 100%);
-        transform: rotate(-180deg);
-        will-change: transform;
-        width: 165px;
-        height: 100%;
-        z-index: 1;
-    }
-
-    .contlines::after {
-        content: "";
-        position: absolute;
-        right: 0;
-        top: 0px;
-        background: linear-gradient(270deg, rgb(27, 31, 36) 2%, rgba(27, 31, 36, 0) 100%);
-        width: 165px;
-        height: 100%;
-        z-index: 1;
-    }
-
-    .cont::after {
-        /* content: "";
-        position: absolute;
-        right: 50px;
-        top: 0px;
-        background: linear-gradient(270deg, rgb(27, 31, 36) 2%, rgba(27, 31, 36, 0) 100%);
-        width: 165px;
-        height: 100%;
-        z-index: 1;   */
-    }
-
-</style>

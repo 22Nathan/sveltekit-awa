@@ -11,6 +11,13 @@ export function horizontalLoopSlider(items, config) {
         items[mid]?.classList.add("middle-item");
     }
 
+    function setLeft(left) {
+        items.forEach(
+            item => item?.classList.remove("left-item")
+        );
+        items[left]?.classList.add("left-item")
+    }
+
 	items = gsap.utils.toArray(items);
 	config = config || {};
 	let tl = gsap.timeline(
@@ -69,8 +76,9 @@ export function horizontalLoopSlider(items, config) {
 		return tl.tweenTo(time, vars);
 	}
 
-	tl.next = vars => {toIndex(curIndex+1, vars) && setMiddle(tl.current() + 2)};
-	tl.previous = vars => {toIndex(curIndex-1, vars) && setMiddle(tl.current() + 2)};
+	tl.next = vars => {toIndex(curIndex+1, vars) && /*setMiddle(tl.current() + 2)*/ setLeft(tl.current())};
+	tl.previous = vars => {toIndex(curIndex-1, vars) && /*setMiddle(tl.current() + 2)*/ setLeft(tl.current())};
+    tl.awaAddThis = vars => {setLeft(tl.current())}
 	tl.current = () => curIndex;
 	tl.toIndex = (index, vars) => toIndex(index, vars);
     tl.updateIndex = () => curIndex = Math.round(tl.progress() * items.length);
@@ -111,7 +119,8 @@ export function horizontalLoopSlider(items, config) {
             },
             onRelease: syncIndex,
             onThrowComplete: () => gsap.set(proxy, {x: 0}) && syncIndex() &&
-            setMiddle(tl.current() + 2) //Find the middle item and toggle Class
+            // setMiddle(tl.current() + 2)
+            setLeft(tl.current())
         })[0];
     
         tl.draggable = draggable;
