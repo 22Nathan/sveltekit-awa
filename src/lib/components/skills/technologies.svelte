@@ -10,9 +10,13 @@
     import { horizontalLoopSlider } from "$lib/js/horizontalLoopSlider"
     import { constSkills } from "$lib/const/const"
 	import ScrollTrigger from "gsap/dist/ScrollTrigger"
+    import ScrollToPlugin from "gsap/dist/ScrollToPlugin"
 
     // ---------------------------------------
     // LET & CONST & VAR
+
+    /** @type {globalThis.ScrollTrigger[]} */
+    let STs
 
     // ---------------------------------------
     // ONMOUNT
@@ -22,29 +26,81 @@
         is_element_sticky()
         gsap_automate_sticky()
         card_hover()
+
+        STs = ScrollTrigger.getAll()
     })
 
     // ---------------------------------------
     // GSAP
 
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
+
     function gsap_infinite_slider(){
 
         const all_carousel_item = gsap.utils.toArray(".carouselitem")
-        const loop = horizontalLoopSlider(all_carousel_item, { paused: true, draggable: true, paddingRight:10, })
+        const loop = horizontalLoopSlider(all_carousel_item, { paused: true, paddingRight:10, })
 
-        all_carousel_item.forEach((carouselitem, i) => 
-            carouselitem.addEventListener("click", () => 
-                loop.toIndex(i, {duration: 0.8, ease: "power1.inOut"})
-            )
+        // all_carousel_item.forEach((carouselitem, i) => 
+        //     carouselitem.addEventListener("click", () => 
+        //         loop.toIndex(i, {duration: 0.8, ease: "power1.inOut"})
+        //     )
+        // )
+
+        all_carousel_item.forEach((carouselitem, i) =>
+            ScrollTrigger.create({
+                trigger: `.awa-block-${i}`,
+                start: "top 40%",
+                end: "bottom 40%",
+                // markers: true,
+                onEnter: function() { 
+                    loop.toIndex(i, {duration: 0.8, ease: "power1.inOut"})
+                    loop.awaAddThis() 
+                },
+                onEnterBack: function() { 
+                    loop.toIndex(i, {duration: 0.8, ease: "power1.inOut"}) 
+                    loop.awaAddThis() 
+                },
+            })
         )
 
-        document.querySelector(".next")?.addEventListener("click", () => loop.next({duration: 0.4, ease: "power1.inOut"}))
-        document.querySelector(".prev")?.addEventListener("click", () => loop.previous({duration: 0.4, ease: "power1.inOut"}))
-        document.querySelectorAll(".carouselitem").forEach((item) =>
-            item.addEventListener("click", () => loop.awaAddThis())
-        )
+        // document.querySelector(".next")?.addEventListener("click", () => loop.next({duration: 0.8, ease: "power1.inOut"}))
+        // document.querySelector(".prev")?.addEventListener("click", () => loop.previous({duration: 0.8, ease: "power1.inOut"}))
+        document.querySelector(".next")?.addEventListener("click", () => loop.toIndex((loop.current()+1), {duration: 0.8, ease: "power1.inOut"}))
+        document.querySelector(".prev")?.addEventListener("click", () => loop.toIndex((loop.current()-1), {duration: 0.8, ease: "power1.inOut"}))
+        // document.querySelector(".next")?.addEventListener("click", () => loop.next({duration: 0.4, ease: "power1.inOut"}))
+        // document.querySelector(".prev")?.addEventListener("click", () => loop.previous({duration: 0.4, ease: "power1.inOut"}))
+        // all_carousel_item.forEach((item) => item.addEventListener("click", () => loop.awaAddThis()))
 
         loop.awaAddThis()
+
+    }
+
+    function gsap_automate_sticky(){
+
+        // for( let i = 0 ; i < constSkills.length ; i++ ){
+        //     ScrollTrigger.create({
+        //         trigger : `.awa-block-${i}`,
+        //         start: "top 30%",
+        //         end: "bottom",
+        //         // markers: true,
+        //         // onEnter: function() { document.querySelector(".next")?.click() } 
+        //     })
+        // }
+
+    }
+
+    /** @param {String} id */
+    function gsap_scroll_to(id){
+
+        gsap.to(
+            window, {
+                duration: 0.8, 
+                scrollTo: { y: id , offsetY: 80 , autoKill: true }, 
+                ease: "power2", 
+                onStart: () => STs.forEach(ST => ST.disable()),
+                onComplete: () => STs.forEach(ST => ST.enable()),
+            }
+        )
 
     }
 
@@ -61,38 +117,22 @@
 
     }
 
-    function get_left_most_element(){
+    // function get_left_most_element(){
 
-        let all_carousel_item = document.querySelectorAll('.carouselitem') 
-        /** @type {Element|null} */
-        let left_most = null
-        all_carousel_item.forEach( el => {
-            if(!left_most){
-                left_most = el
-                return
-            }
-            if(el.getBoundingClientRect()['left'] < left_most.getBoundingClientRect()['left']) 
-                left_most = el
+    //     let all_carousel_item = document.querySelectorAll('.carouselitem') 
+    //     /** @type {Element|null} */
+    //     let left_most = null
+    //     all_carousel_item.forEach( el => {
+    //         if(!left_most){
+    //             left_most = el
+    //             return
+    //         }
+    //         if(el.getBoundingClientRect()['left'] < left_most.getBoundingClientRect()['left']) 
+    //             left_most = el
 
-        })
+    //     })
 
-    }
-
-    function gsap_automate_sticky(){
-
-        gsap.registerPlugin(ScrollTrigger)
-
-        for( let i = 0 ; i < constSkills.length ; i++ ){
-            ScrollTrigger.create({
-                trigger : `.awa-block-${i}`,
-                start: "top 30%",
-                end: "bottom",
-                // markers: true,
-                // onEnter: function() { document.querySelector(".next")?.click() } 
-            })
-        }
-
-    }
+    // }
 
     function card_hover(){
 
@@ -113,17 +153,18 @@
 
     }
 
+
 </script>
 
 <!-- --------------------------------------- -->
 
-    <div class="relative">
+    <div class="relative z-0">
 
         <!-- <div class="hidden is-pinned left-item"></div> -->
 
-        <div class="h-[10000px]">
+        <div class="h-fit py-20">
 
-            <div class="sticky top-[-1px] pt-[71px] pb-2 z-50">
+            <div class="sticky top-[-1px] pt-[71px] pb-2 z-40">
                 
                 <div class="relative w-full">
                     <div class="relative flex items-center mx-auto px-8 max-w-3xl w-full" style="-webkit-box-align: center;">
@@ -132,27 +173,28 @@
                         <div class="flex items-center flex-1 overflow-hidden" style="-webkit-box-align: center; -webkit-mask-image: linear-gradient( to right, transparent 0%, black 16px, black calc(100% - 64px), transparent 100% );">
                             <div class="relative flex items-center overflow-x-hidden scroll-smooth shadow-none outline-none" style="-webkit-box-align: center;">
                                 { #each constSkills as { text , anchor } }
-                                    <a 
-                                        href="#{anchor}" target="_self"
+                                    <div 
+                                        on:click={()=>{ gsap_scroll_to("#"+anchor) }}
+                                        on:keypress
                                         class="
                                         relative carouselitem text-sm leading-normal whitespace-nowrap
                                         h-8 px-4 cursor-pointer select-none items-center flex m-0
                                         text-[#8a8f98] hover:text-[#d0d6e0] active:text-[#f7f8f8] transition-colors"
                                     > 
                                         { text } 
-                                    </a>
+                            </div>
                                 { /each }
                             </div>
                         </div>
-                        <button 
-                            on:click={()=>{get_left_most_element()}}
+                        <button
+                            
                             class="prev h-8 w-8 flex items-center justify-center">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98" class="rotate-180">
                                 <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
                             </svg>
                         </button>
                         <button 
-                            on:click={()=>{get_left_most_element()}}
+                            
                             class="next h-8 w-8 flex items-center justify-center">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="#8A8F98">
                                 <path d="M5.46967 11.4697C5.17678 11.7626 5.17678 12.2374 5.46967 12.5303C5.76256 12.8232 6.23744 12.8232 6.53033 12.5303L10.5303 8.53033C10.8207 8.23999 10.8236 7.77014 10.5368 7.47624L6.63419 3.47624C6.34492 3.17976 5.87009 3.17391 5.57361 3.46318C5.27713 3.75244 5.27128 4.22728 5.56054 4.52376L8.94583 7.99351L5.46967 11.4697Z"></path>
@@ -163,13 +205,13 @@
 
             </div>
 
-            <div class="container mx-auto pt-14">
+            <div class="container mx-auto pt-14 z-0 relative">
 
                 <div id="contcards" class="flex flex-col duration-200">
 
                     { #each constSkills as { text , list , anchor } , i }
 
-                        <h1 id="{anchor}" class="anchor pb-3 pt-10"> { text } </h1>
+                        <h1 id="{anchor}" class="pb-3 pt-10"> { text } </h1>
                             
                         <div class="awa-block-{i} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
 
@@ -245,9 +287,5 @@
 <!-- --------------------------------------- -->
 
 <style type="postcss">
-
-    .anchor {
-        scroll-margin-top: 100px;
-    }
 
 </style>
