@@ -97,15 +97,15 @@
         function disappear(){
             gsap.fromTo(".awa-slide", 
                 { opacity:1 }, 
-                { opacity:0 , duration:.8 })
+                { opacity:0 , duration:2 })
         }
 
         function active(){
-            if(tlActive.isActive())
-                return
-            tlActive.to(".awa-slide", { y:-3 , duration:.5 })
-            tlActive.to(".awa-slide", { y:3 , duration:.5 })
-            tlActive.to(".awa-slide", { y:0 , duration:.5 })
+            // if(tlActive.isActive())
+            //     return
+            // tlActive.to(".awa-slide", { y:-3 , duration:.5 })
+            // tlActive.to(".awa-slide", { y:3 , duration:.5 })
+            // tlActive.to(".awa-slide", { y:0 , duration:.5 })
         }
 
         /** @param {Element} item */

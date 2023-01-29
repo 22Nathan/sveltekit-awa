@@ -18,7 +18,7 @@
     // FUNCTIONS RANDOM
 
 	/** 
-    * @param {number} n, m 
+    * @param {number} n
     * @param {number} m 
     */
 	function modulo(n, m) { return ((n % m) + m) % m }

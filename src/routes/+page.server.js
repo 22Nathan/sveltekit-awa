@@ -44,7 +44,11 @@
 
     /** @type {import('./$types').PageServerLoad} */
     export async function load({ params }) {
-        return prismaGetTotalLike()
+
+        return {
+            total : (await prismaGetTotalLike()).total,
+        }
+
     }
 
 // ---------------------------------------

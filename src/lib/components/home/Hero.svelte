@@ -10,18 +10,19 @@
     import { awa_store_total } from '$lib/js/stores'
     import toast, { Toaster } from 'svelte-french-toast'
     import gsap from 'gsap'
-    import { Lottie } from 'lottie-svelte';
 	import Counter from "$lib/components/home/Counter.svelte"
 
     // ---------------------------------------
     // ONMOUNT
+
+    onMount(()=>{
+    })
 
     // ---------------------------------------
     // GSAP
 
     const tl = gsap.timeline({})
     const t2 = gsap.timeline({})
-    const t3 = gsap.timeline({})
 
     function gsap_rotate(){
         if(tl.isActive()) return
@@ -88,7 +89,11 @@
     <header class="container mx-auto pt-36 pb-32 md:pb-36 md:pt-56 text-center flex flex-col items-center cursor-default relative">
         
         <h1 class="title text-5xl md:text-7xl lg:text-8xl max-w-[720px] mb-10">
-            <span id="awa-text-gradient" class="awa-text-gradient relative z-30 bg-gradient-to-r from-awa-3 via-awa-4 to-awa-3">
+            <span 
+                id="awa-text-gradient" 
+                class="awa-text-gradient relative z-30 bg-gradient-to-r from-awa-3 via-awa-4 to-awa-3"
+                data-rolling-text="Nathan ROSSI"
+            >
                 Nathan ROSSI
             </span>
         </h1>
